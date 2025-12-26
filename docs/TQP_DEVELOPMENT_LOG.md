@@ -56,9 +56,19 @@ git checkout ad0fdeeb590f595c191801eb9b25a2ab335b8ad5
 
 ---
 
-### Phase 1: 核心协议实现 ⬜ 未开始
+### Phase 1: 核心协议实现 🔄 进行中
 
 预计工期: 2-3 周
+开始时间: 2025-12-26 17:45
+
+#### 核心代码文件（已创建）
+
+| 文件 | 位置 | 状态 | 说明 |
+|------|------|------|------|
+| `singbox_inbound.go` | `docs/tqp_code/` | ✅ 已创建 | sing-box Inbound 实现 |
+| `singbox_option.go` | `docs/tqp_code/` | ✅ 已创建 | sing-box Option 定义 |
+| `mihomo_outbound.go` | `docs/tqp_code/` | ✅ 已创建 | mihomo Outbound 实现 |
+| `README.md` | `docs/tqp_code/` | ✅ 已创建 | 集成指南 |
 
 #### V2bX 后端任务
 
@@ -147,6 +157,39 @@ git checkout ad0fdeeb590f595c191801eb9b25a2ab335b8ad5
 ---
 
 ## 📝 开发日志 (按时间倒序)
+
+### 2025-12-26 17:35 - 架构澄清（关键！）
+
+**操作人**: 用户指出
+**问题**: 之前文档没有弄清楚各端使用的内核
+
+**澄清内容**:
+
+| 组件 | 内核 | 位置 | 说明 |
+|------|------|------|------|
+| **V2bX 后端** | 🔷 **sing-box** | `e:\GitHub\V2bX\sing-box_mod` | 本地已有 fork |
+| **客户端(mihomo系)** | 🔶 **mihomo** | 需要 Fork | Clash Meta 内核 |
+| **Shadowrocket** | ⬛ 闭源 | 无法修改 | ❌ **不支持 TQP** |
+
+**影响**:
+1. TQP 协议需要在 **两个不同内核** 中分别实现：
+   - sing-box 添加 TQP **Inbound** (服务端)
+   - mihomo 添加 TQP **Outbound** (客户端)
+2. **小火箭无法支持** TQP（闭源，无扩展接口）
+3. 用户需引导使用其他客户端（Stash、Clash Verge 等）
+
+**实现路径调整**:
+```
+之前理解（错误）:
+  V2bX → 独立实现
+  
+正确理解:
+  V2bX → 基于 sing-box 扩展 TQP Inbound
+         ↓
+  sing-box_mod (本地fork) → 添加 protocol/tqp/
+```
+
+---
 
 ### 2025-12-26 17:30 - 技术决策确认
 
