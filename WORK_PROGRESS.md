@@ -38,6 +38,12 @@
 *   **下一步**：建议 将此脚本内容更新到您的 `wangn9900/V2bX-script` 仓库的 `install.sh` 中，完成闭环。
 
 ## 4. 当前版本信息
-*   **V2bX Version**: `v1.0.8` (已验证 Windows/Linux 编译通过 ✅)
+*   **V2bX Version**: `v1.1.9` (已修复流量统计 Bug，Release ✅)
 *   **Core**: `sing-box_mod` (Go 1.23 PATCHED)
 *   **QUIC**: `v0.55.0`
+
+## 5. 关键修复记录 (2025-12-23)
+*   **Hy2/AnyTLS Mobile Traffic Fix**:
+    *   **现象**: 手机端 (Mobile Client) 使用 Hy2/AnyTLS/XTLS 协议时，服务端流量统计几乎为 0。
+    *   **原因**: 新版 Sing-box 内核在处理特定协议流时回退到标准 `Read/Write` 接口，而 V2bX 的 `ConnCounter` 在这两个方法中使用 `Store` (覆盖) 而非 `Add` (累加)，导致流量计数被不断重置。
+    *   **方案**: 修正 `common/counter/conn.go`，将 `Store` 替换为 `Add`。验证后 TCP/UDP 流量统计均准确。
