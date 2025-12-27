@@ -212,6 +212,11 @@ func getInboundOptions(tag string, info *panel.NodeInfo, c *conf.Options) (optio
 			tls.ALPN = []string{"h2"}
 		}
 
+		// Fix: Force http/1.1 ALPN for TCP to ensure fallback compatibility
+		if n.Network == "tcp" {
+			tls.ALPN = []string{"http/1.1"}
+		}
+
 		if info.Type == "vless" {
 			in.Type = "vless"
 			// Force Fallback to 127.0.0.1:80 for default masquerade
